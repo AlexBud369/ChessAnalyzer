@@ -1,9 +1,13 @@
 
 # раземры окна и доски
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 800
 BOARD_SIZE = 600
 SQUARE_SIZE = BOARD_SIZE // 8
+
+# Панели
+HISTORY_PANEL_WIDTH = 300
+INFO_PANEL_HEIGHT = 120
 
 # цвета
 LIGHT = (240, 217, 181)
@@ -13,6 +17,12 @@ BLACK = (0, 0, 0)
 BUTTON_COLOR = (200, 200, 200)
 BUTTON_HOVER_COLOR = (170, 170, 170)
 TEXT_COLOR = (50, 50, 50)
+
+# Цвета для панелей
+PANEL_BG_COLOR = (240, 240, 240)       # фон панели истории
+HIGHLIGHT_COLOR = (200, 200, 255)       # подсветка текущего хода
+ROW_BG_COLOR = WHITE                    # фон обычной строки
+HINT_TEXT_COLOR = (100, 100, 100)       # цвет подсказки "нет ходов"
 
 # Кнопки
 BUTTON_WIDTH = 150
