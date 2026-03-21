@@ -5,6 +5,8 @@ from messages import (
     RESULT_STALEMATE, RESULT_INSUFFICIENT_MATERIAL,
     RESULT_FIFTY_MOVES, RESULT_REPETITION
 )
+from src.engine.search import get_best_move
+from src.engine.evaluation import evaluate
 
 class GameState:
     """
@@ -97,3 +99,10 @@ class GameState:
         if board.is_repetition(3):
             return {"is_terminal": True, "message": RESULT_REPETITION, "code": "repetition"}
         return None
+
+    def get_best_move(self, depth: int = 1):
+        """
+        Возвращает лучший ход и его оценку,
+        используя минимакс с указанной глубиной и материальной оценкой.
+        """
+        return get_best_move(self.board, depth, evaluate)
