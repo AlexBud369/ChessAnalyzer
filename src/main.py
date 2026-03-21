@@ -113,17 +113,57 @@ class App:
             for btn in self.buttons:
                 if btn.handle_event(event):
                     if btn.text == BUTTON_NEW_GAME:
-                        self.game_state.reset_to_start()
-                        self.update_after_move()
+                        self._handle_new_game()
                     elif btn.text == BUTTON_ANALYZE:
-                        print("Анализ позиции:", self.game_state.board.fen())
+                        self._handle_analyze()
                     elif btn.text == BUTTON_SAVE_FEN:
-                        self.save_fen()
+                        self._handle_save_fen()
                     elif btn.text == BUTTON_LOAD_FEN:
-                        self.load_fen()
+                        self._handle_load_fen()
 
             self.history_panel.handle_event(event)
             self.drag_handler.handle_event(event)
+
+    def _handle_new_game(self):
+        self.game_state.reset_to_start()
+        self.update_after_move()
+
+    def _handle_analyze(self):
+        best_move, evaluation = self.game_state.get_best_move(depth=1)
+        if best_move is not None:
+            san = self.game_state.board.san(best_move)
+            self.info_panel.update_analysis(evaluation, san)
+            print(f"Лучший ход: {san}, оценка: {evaluation:.2f}")
+        else:
+            self.info_panel.update_analysis(None, None)
+            print("Игра окончена, ходов нет.")
+        self.info_panel.update(self.game_state)
+
+    def _handle_save_fen(self):
+        root = tk.Tk()
+        root.withdraw()
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".fen",
+            filetypes=[("FEN files", "*.fen"), ("All files", "*.*")]
+        )
+        if file_path:
+            with open(file_path, "w") as f:
+                f.write(self.game_state.board.fen())
+
+    def _handle_load_fen(self):
+        root = tk.Tk()
+        root.withdraw()
+        file_path = filedialog.askopenfilename(
+            filetypes=[("FEN files", "*.fen"), ("All files", "*.*")]
+        )
+        if file_path:
+            with open(file_path, "r") as f:
+                fen = f.read().strip()
+            try:
+                self.game_state.set_initial_fen(fen)
+                self.update_after_move()
+            except ValueError as e:
+                print("Ошибка загрузки FEN:", e)
 
     def save_fen(self):
         root = tk.Tk()
