@@ -25,3 +25,13 @@ MATERIAL_VALUES = {
     chess.QUEEN: 9,
     chess.KING: 0
 }
+
+# Отображение типа фигуры на канал тензора (для нейросети)
+PIECE_TO_CHANNEL = {
+    chess.PAWN: 0,
+    chess.KNIGHT: 1,
+    chess.BISHOP: 2,
+    chess.ROOK: 3,
+    chess.QUEEN: 4,
+    chess.KING: 5,
+}
