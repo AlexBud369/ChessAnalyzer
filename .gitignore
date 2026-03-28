@@ -1,6 +1,15 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
+###prepared_dataset###
+data
+data/raw/
+data/processed/
+*.npy
+*.npz
+models/*.pth
+models/*.json
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
