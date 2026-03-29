@@ -35,3 +35,9 @@ PIECE_TO_CHANNEL = {
     chess.QUEEN: 4,
     chess.KING: 5,
 }
+
+# Константы для нейросетевого представления
+NUM_PIECE_TYPES = 6          # 6 типов фигур (пешка, конь, слон, ладья, ферзь, король)
+NUM_COLORS = 2
+NUM_CHANNELS = NUM_PIECE_TYPES * NUM_COLORS  # 12
+COLOR_OFFSET = NUM_PIECE_TYPES               # 6 – сдвиг для чёрных фигур
