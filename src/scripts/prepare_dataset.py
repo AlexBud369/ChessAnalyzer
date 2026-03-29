@@ -5,7 +5,6 @@
 """
 import pandas as pd
 import numpy as np
-import chess
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,8 +13,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from tqdm import tqdm
 
-from chess_constants import BOARD_RANKS, BOARD_FILES, PIECE_TO_CHANNEL
+from chess_constants import BOARD_RANKS, BOARD_FILES
 from dataset_utils import parse_evaluation
+from utils.position_to_tensor_converter import fen_to_tensor
 
 CSV_PATH = "data/raw/chessData.csv"
 OUTPUT_DIR = "data/processed"
@@ -23,20 +23,6 @@ MAX_ROWS = 2_000_000
 TEST_SIZE = 0.1
 VAL_SIZE = 0.1
 RANDOM_SEED = 42
-
-def fen_to_tensor(fen):
-    """Преобразует FEN в тензор 8 x 8 x 12"""
-    board = chess.Board(fen)
-    tensor = np.zeros((BOARD_RANKS, BOARD_FILES, 12), dtype=np.float32)
-    for square, piece in board.piece_map().items():
-        row = BOARD_RANKS - 1 - chess.square_rank(square)
-        col = chess.square_file(square)
-        channel = PIECE_TO_CHANNEL[piece.piece_type]
-        if piece.color == chess.WHITE:
-            tensor[row, col, channel] = 1
-        else:
-            tensor[row, col, channel + 6] = 1
-    return tensor
 
 def load_data(csv_path, max_rows):
     print(f"Загрузка {csv_path} (первые {max_rows} строк)...")

@@ -1,7 +1,7 @@
 import pygame
 import chess
 import textwrap
-from src.utils.chess_utils import material_score
+from src.utils.position_evalution import material_score
 
 class InfoPanel:
     def __init__(self, rect, font):
