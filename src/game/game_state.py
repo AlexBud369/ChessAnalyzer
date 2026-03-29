@@ -100,9 +100,13 @@ class GameState:
             return {"is_terminal": True, "message": RESULT_REPETITION, "code": "repetition"}
         return None
 
-    def get_best_move(self, depth: int = 1):
+    def get_best_move(self, depth: int = 1, evaluator=None):
         """
         Возвращает лучший ход и его оценку,
-        используя минимакс с указанной глубиной и материальной оценкой.
+        используя минимакс с указанной глубиной и функцией оценки.
+        Если evaluator не передан, используется материальная оценка.
         """
-        return get_best_move(self.board, depth, evaluate)
+        if evaluator is None:
+            from src.engine.evaluation import evaluate
+            evaluator = evaluate
+        return get_best_move(self.board, depth, evaluator)

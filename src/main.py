@@ -17,6 +17,8 @@ from src.gui.history_panel import HistoryPanel
 from src.gui.info_panel import InfoPanel
 from src.gui.promotion_dialog import PromotionDialog
 from src.gui.game_over_dialog import GameOverDialog
+
+from src.engine import evaluation
 from src.game.game_state import GameState
 from src.utils.image_loader import load_piece_images
 from src.messages import (
@@ -129,11 +131,11 @@ class App:
         self.update_after_move()
 
     def _handle_analyze(self):
-        best_move, evaluation = self.game_state.get_best_move(depth=1)
+        best_move, evaluation_value = self.game_state.get_best_move(depth=1, evaluator=evaluation.evaluate_nn)
         if best_move is not None:
             san = self.game_state.board.san(best_move)
-            self.info_panel.update_analysis(evaluation, san)
-            print(f"Лучший ход: {san}, оценка: {evaluation:.2f}")
+            self.info_panel.update_analysis(evaluation_value, san)
+            print(f"Лучший ход: {san}, оценка: {evaluation_value:.2f}")
         else:
             self.info_panel.update_analysis(None, None)
             print("Игра окончена, ходов нет.")
