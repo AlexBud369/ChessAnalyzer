@@ -8,7 +8,7 @@ import json
 import torch
 import chess
 from src.utils.position_to_tensor_converter import fen_to_tensor
-from src.engine.chess_value_net import ChessValueNet  # импортируем архитектуру из search.py
+from src.engine.chess_value_net import ChessValueNet
 
 class NNEvaluator:
     _instance = None

@@ -14,17 +14,15 @@ class GameState:
     """
     def __init__(self, initial_fen=chess.STARTING_FEN):
         self.initial_fen = initial_fen
-        self.moves = []          # список объектов chess.Move
-        self.san_moves = []      # кэш SAN для быстрого доступа
-        self.current_index = 0   # количество сделанных ходов (0 - начальная позиция)
+        self.moves = []
+        self.san_moves = []
+        self.current_index = 0
         self.board = chess.Board(initial_fen)
 
     def reset_to_start(self):
-        """Сбрасывает партию к начальной позиции"""
         self.set_initial_fen(chess.STARTING_FEN)
 
     def set_initial_fen(self, fen):
-        """Устанавливает новую начальную позицию, очищает историю"""
         self.initial_fen = fen
         self.moves = []
         self.san_moves = []
@@ -32,7 +30,6 @@ class GameState:
         self.board = chess.Board(fen)
 
     def _is_promotion_move(self, from_square, to_square):
-        """Проверяет, является ли ход пешки превращением"""
         piece = self.board.piece_at(from_square)
         if not piece or piece.piece_type != chess.PAWN:
             return False
@@ -41,18 +38,15 @@ class GameState:
                (piece.color == chess.BLACK and to_rank == PROMOTION_RANK_BLACK)
 
     def is_promotion_move(self, from_square, to_square):
-        """Публичный метод для проверки, является ли ход превращением пешки"""
         return self._is_promotion_move(from_square, to_square)
 
     def _create_move(self, from_square, to_square, promotion):
-        """Создание объекта хода с учётом превращения"""
         if self._is_promotion_move(from_square, to_square):
             promotion = promotion or DEFAULT_PROMOTION
             return chess.Move(from_square, to_square, promotion=promotion)
         return chess.Move(from_square, to_square)
 
     def try_move(self, from_square, to_square, promotion=None):
-        """Пытается выполнить ход. Возвращает True при успехе."""
         move = self._create_move(from_square, to_square, promotion)
 
         if move not in self.board.legal_moves:
@@ -71,7 +65,6 @@ class GameState:
         return True
 
     def go_to_index(self, index):
-        """Перейти к позиции после index ходов (0 - начальная позиция)."""
         if 0 <= index <= len(self.moves):
             self.current_index = index
             self.board = chess.Board(self.initial_fen)
@@ -81,7 +74,6 @@ class GameState:
         return False
 
     def get_san_moves(self):
-        """Возвращает список SAN для всех ходов """
         return self.san_moves.copy()
 
     def get_game_result(self):
@@ -100,13 +92,12 @@ class GameState:
             return {"is_terminal": True, "message": RESULT_REPETITION, "code": "repetition"}
         return None
 
-    def get_best_move(self, depth: int = 1, evaluator=None):
+    def get_best_move(self, depth: int = 3, evaluator=None):
         """
         Возвращает лучший ход и его оценку,
         используя минимакс с указанной глубиной и функцией оценки.
         Если evaluator не передан, используется материальная оценка.
         """
         if evaluator is None:
-            from src.engine.evaluation import evaluate
             evaluator = evaluate
         return get_best_move(self.board, depth, evaluator)

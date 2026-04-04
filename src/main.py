@@ -131,7 +131,7 @@ class App:
         self.update_after_move()
 
     def _handle_analyze(self):
-        best_move, evaluation_value = self.game_state.get_best_move(depth=1, evaluator=evaluation.evaluate_nn)
+        best_move, evaluation_value = self.game_state.get_best_move(depth=3, evaluator=evaluation.evaluate_nn)
         if best_move is not None:
             san = self.game_state.board.san(best_move)
             self.info_panel.update_analysis(evaluation_value, san)
