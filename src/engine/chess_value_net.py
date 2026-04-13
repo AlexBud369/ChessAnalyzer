@@ -47,7 +47,7 @@ class ChessValueNet(nn.Module):
     def __init__(self):
         super().__init__()
         self.init_conv = nn.Sequential(
-            nn.Conv2d(12, 32, kernel_size=3, padding=1),
+            nn.Conv2d(18, 32, kernel_size=3, padding=1),
             nn.BatchNorm2d(32),
             nn.ReLU()
         )

@@ -14,7 +14,7 @@ from sklearn.utils import shuffle
 from tqdm import tqdm
 
 from chess_constants import BOARD_RANKS, BOARD_FILES
-from dataset_utils import parse_evaluation
+from evaluation_parser import parse_evaluation
 from utils.position_to_tensor_converter import fen_to_tensor
 
 CSV_PATH = "data/raw/chessData.csv"

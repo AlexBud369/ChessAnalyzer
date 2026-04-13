@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from dataset_utils import parse_evaluation
+from evaluation_parser import parse_evaluation
 
 def load_data(csv_path, nrows):
     print(f"Загрузка {csv_path}...")

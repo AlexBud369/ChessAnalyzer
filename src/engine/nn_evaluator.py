@@ -7,7 +7,7 @@
 import json
 import torch
 import chess
-from src.utils.position_to_tensor_converter import fen_to_tensor
+from src.utils.position_to_tensor_converter import fen_to_tensor_18ch
 from src.engine.chess_value_net import ChessValueNet
 
 class NNEvaluator:
@@ -43,7 +43,7 @@ class NNEvaluator:
         :return: оценка в пешках (положительная = преимущество белых)
         """
         fen = board.fen()
-        tensor_np = fen_to_tensor(fen)
+        tensor_np = fen_to_tensor_18ch(fen)
         tensor = torch.tensor(tensor_np, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0)
         tensor = tensor.to(self.device)
 

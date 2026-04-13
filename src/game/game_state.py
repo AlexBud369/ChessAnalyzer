@@ -5,7 +5,7 @@ from messages import (
     RESULT_STALEMATE, RESULT_INSUFFICIENT_MATERIAL,
     RESULT_FIFTY_MOVES, RESULT_REPETITION
 )
-from src.engine.search import get_best_move
+from src.engine.minimax_search import get_best_move
 from src.engine.evaluation import evaluate
 
 class GameState:
