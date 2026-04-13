@@ -18,15 +18,16 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from engine.chess_value_net import ChessValueNet
 
-DATA_DIR = "data/processed_balanced"
+DATA_DIR = "data/processed_balanced_18ch"
 MODEL_DIR = "models"
 CHECKPOINT_FILE = os.path.join(MODEL_DIR, "checkpoint.pt")
 CHECKPOINT_INTERVAL = 2000
 CHECKPOINT_KEEP_LAST = 1
 
 BATCH_SIZE = 128
-EPOCHS = 15
-LEARNING_RATE = 0.001
+EPOCHS = 20
+LEARNING_RATE = 0.0005
+WEIGHT_DECAY = 1e-4
 NUM_WORKERS = 4
 PIN_MEMORY = True
 
@@ -272,8 +273,12 @@ def main() -> None:
     train_loader, val_loader = create_dataloaders(train_X, train_y_norm, val_X, val_y_norm)
 
     model = ChessValueNet().to(DEVICE)
-    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
     criterion = nn.MSELoss()
+
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.5, patience=5, verbose=True
+    )
 
     start_epoch, start_batch, best_val_loss = resume_from_checkpoint(model, optimizer)
 
@@ -290,6 +295,8 @@ def main() -> None:
         is_best = val_loss < best_val_loss
         if is_best:
             best_val_loss = val_loss
+
+        scheduler.step(val_loss)
 
         save_main_checkpoint(model, optimizer, epoch, best_val_loss, is_best)
         start_batch = 0
