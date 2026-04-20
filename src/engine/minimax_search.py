@@ -1,6 +1,3 @@
-"""
-Минимакс с альфа-бета отсечением и таблицей транспозиций.
-"""
 import chess
 from typing import List, Callable, Optional, Tuple
 from .transposition_table import TranspositionTable
@@ -17,8 +14,8 @@ def order_moves(board: chess.Board, moves: List[chess.Move]) -> List[chess.Move]
         if board.is_check():
             score += 2
         board.pop()
-        return -score
-    return sorted(moves, key=move_score)
+        return score
+    return sorted(moves, key=move_score, reverse=True)
 
 def evaluate_maximizing(board: chess.Board, depth: int, alpha: float, beta: float,
                         evaluator: Callable[[chess.Board], float],
@@ -49,7 +46,7 @@ def evaluate_maximizing(board: chess.Board, depth: int, alpha: float, beta: floa
             break
     if tt is not None:
         node_type = 'exact'
-        if max_eval <= alpha - beta:
+        if max_eval <= alpha:
             node_type = 'upper'
         elif max_eval >= beta:
             node_type = 'lower'

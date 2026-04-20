@@ -8,17 +8,20 @@ class TranspositionTable:
         self.new_entries = 0
 
     def _get_hash(self, board: chess.Board) -> int:
+        if hasattr(board, 'zobrist_hash'):
+            return board.zobrist_hash()
+        if hasattr(board, 'transposition_key'):
+            key = board.transposition_key()
+
+            if isinstance(key, tuple):
+                return key[0] ^ key[1]
+            return key
         if hasattr(board, '_transposition_key'):
             key = board._transposition_key()
-        elif hasattr(board, 'transposition_key'):
-            key = board.transposition_key()
-        elif hasattr(board, 'zobrist_hash'):
-            key = board.zobrist_hash()
-        else:
-            key = hash(board.fen())
-        if isinstance(key, tuple):
-            key = key[0]
-        return key
+            if isinstance(key, tuple):
+                return key[0] ^ key[1]
+            return key
+        return hash(board.fen())
 
     def _hash(self, board: chess.Board) -> int:
         return self._get_hash(board) % self.size
@@ -45,6 +48,7 @@ class TranspositionTable:
                ) -> Tuple[Optional[float], Optional[chess.Move]]:
         key = self._hash(board)
         entry = self.table[key]
+
         if entry is None or entry['hash'] != self._full_hash(board):
             return None, None
         if entry['depth'] < depth:

@@ -131,6 +131,12 @@ class App:
         self.update_after_move()
 
     def _handle_analyze(self):
+        evaluation_value = evaluation.evaluate_nn(self.game_state.board)
+        self.info_panel.update_analysis(evaluation_value, "")
+        print(f"Оценка позиции: {evaluation_value:.2f}")
+        self.info_panel.update(self.game_state)
+
+    '''def _handle_analyze(self):
         best_move, evaluation_value = self.game_state.get_best_move(depth=4, evaluator=evaluation.evaluate_nn)
         if best_move is not None:
             san = self.game_state.board.san(best_move)
@@ -139,7 +145,7 @@ class App:
         else:
             self.info_panel.update_analysis(None, None)
             print("Игра окончена, ходов нет.")
-        self.info_panel.update(self.game_state)
+        self.info_panel.update(self.game_state)'''
 
     def _handle_save_fen(self):
         root = tk.Tk()

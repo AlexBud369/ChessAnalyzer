@@ -42,6 +42,11 @@ class NNEvaluator:
         :param board: объект python-chess Board
         :return: оценка в пешках (положительная = преимущество белых)
         """
+        if board.is_checkmate():
+            return -self.max_abs if board.turn == chess.WHITE else self.max_abs
+        if board.is_stalemate() or board.is_insufficient_material():
+            return 0.0
+
         fen = board.fen()
         tensor_np = fen_to_tensor_18ch(fen)
         tensor = torch.tensor(tensor_np, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0)
