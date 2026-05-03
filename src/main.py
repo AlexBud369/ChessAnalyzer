@@ -26,6 +26,9 @@ from src.messages import (
     APP_CAPTION
 )
 
+from src.engine.dual_evaluator import DualEvaluator
+from src.engine.mcts import MCTS
+
 
 class App:
     """Главный класс приложения."""
@@ -39,6 +42,10 @@ class App:
 
         self.piece_images = load_piece_images()
         self.game_state = GameState()
+
+        self.dual_evaluator = DualEvaluator()
+        self.dual_evaluator.initialize("model1/chess_dual_best.pth")
+        self.mcts = MCTS(self.dual_evaluator, num_iterations=400)
 
         self.history_panel = self._create_history_panel()
         self.info_panel = self._create_info_panel()
@@ -131,9 +138,19 @@ class App:
         self.update_after_move()
 
     def _handle_analyze(self):
-        evaluation_value = evaluation.evaluate_nn(self.game_state.board)
-        self.info_panel.update_analysis(evaluation_value, "")
-        print(f"Оценка позиции: {evaluation_value:.2f}")
+        try:
+            best_move = self.mcts.search(self.game_state.board)
+            if best_move:
+                san = self.game_state.board.san(best_move)
+                value, _ = self.dual_evaluator.evaluate(self.game_state.board)
+                self.info_panel.update_analysis(value, san)
+                self.info_panel.update_policy(san)
+                print(f"Лучший ход по MCTS: {san}, сырая оценка (value): {value:.3f}")
+            else:
+                self.info_panel.update_analysis(None, None)
+                print("Игра окончена, ходов нет.")
+        except Exception as e:
+            print("Ошибка анализа:", e)
         self.info_panel.update(self.game_state)
 
     '''def _handle_analyze(self):

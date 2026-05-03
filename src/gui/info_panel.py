@@ -12,6 +12,7 @@ class InfoPanel:
         self.turn = "Белые"
         self.analysis_eval = None
         self.analysis_best_move = None
+        self.policy_move = None
 
     def update(self, game_state):
         self.fen = game_state.board.fen()
@@ -21,6 +22,9 @@ class InfoPanel:
     def update_analysis(self, evaluation, best_move_san):
         self.analysis_eval = evaluation
         self.analysis_best_move = best_move_san
+
+    def update_policy(self, best_move_san):
+        self.policy_move = best_move_san
 
     def draw(self, screen):
         pygame.draw.rect(screen, (220, 220, 220), self.rect)
@@ -32,6 +36,9 @@ class InfoPanel:
 
         if self.analysis_eval is not None:
             y = self._draw_line(screen, f"Оценка: {self.analysis_eval:+.2f}", y)
+
+        if self.policy_move is not None:
+            y = self._draw_line(screen, f"Рек. ход (MCTS): {self.policy_move}", y)
 
         if self.analysis_best_move is not None:
             y = self._draw_line(screen, f"Лучший ход: {self.analysis_best_move}", y)
