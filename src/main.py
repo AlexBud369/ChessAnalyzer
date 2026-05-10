@@ -44,7 +44,7 @@ class App:
         self.game_state = GameState()
 
         self.dual_evaluator = DualEvaluator()
-        self.dual_evaluator.initialize("model1/chess_dual_best.pth")
+        self.dual_evaluator.initialize("model2/chess_dual_best.pth")
         self.mcts = MCTS(self.dual_evaluator, num_iterations=400)
 
         self.history_panel = self._create_history_panel()
