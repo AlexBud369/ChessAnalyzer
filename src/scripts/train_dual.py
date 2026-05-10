@@ -17,7 +17,7 @@ from utils.training_helpers import (
 DEFAULT_DATA_DIR = "src/data/chess_data"
 DEFAULT_MODEL_DIR = "src/model2"
 DEFAULT_BATCH_SIZE = 128
-DEFAULT_EPOCHS = 40
+DEFAULT_EPOCHS = 15
 DEFAULT_LR = 0.0001
 DEFAULT_WEIGHT_DECAY = 1e-3
 DEFAULT_VALUE_COEF = 1.0
@@ -42,6 +42,7 @@ def main():
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--test-size", type=int, default=5000)
     parser.add_argument("--num-workers", type=int, default=DEFAULT_NUM_WORKERS)
+    parser.add_argument("--pretrained", type=str, default=None)
     args = parser.parse_args()
 
     os.makedirs(args.model_dir, exist_ok=True)
@@ -52,21 +53,28 @@ def main():
     train_ds, val_ds = load_data(args.data_dir, test_mode=args.test, test_size=args.test_size)
     train_loader, val_loader = create_dataloaders(train_ds, val_ds, args.batch_size, args.num_workers)
 
-    model = ChessDualNet(input_channels=18, dropout=0.1).to(device)
+    model = ChessDualNet(input_channels=18, dropout=0.2).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3, verbose=True)
 
-    latest = find_latest_checkpoint(args.model_dir)
     start_epoch = 0
     start_batch = 0
     best_val_loss = float('inf')
-    if latest:
-        start_epoch, start_batch, best_val_loss = load_checkpoint(model, optimizer, latest, device)
-        print(f"Resuming from {latest}: epoch {start_epoch}, batch {start_batch}, best_val={best_val_loss:.6f}")
-        start_epoch += 1
-        start_batch = 0
+
+    if args.pretrained:
+        print(f"Loading pretrained weights from {args.pretrained}")
+        state_dict = torch.load(args.pretrained, map_location=device)
+        model.load_state_dict(state_dict)
+        print("Pretrained loaded. Optimizer and scheduler are reset.")
     else:
-        print("Training from scratch.")
+        latest = find_latest_checkpoint(args.model_dir)
+        if latest:
+            start_epoch, start_batch, best_val_loss = load_checkpoint(model, optimizer, latest, device)
+            print(f"Resuming from {latest}: epoch {start_epoch}, batch {start_batch}, best_val={best_val_loss:.6f}")
+            start_epoch += 1
+            start_batch = 0
+        else:
+            print("Training from scratch.")
 
     total_start = time.time()
     prev_val = None
