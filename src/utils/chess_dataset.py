@@ -3,6 +3,7 @@ import glob
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+from utils.mmap_dataset import MMapChessDataset
 
 class ChessAlphaDataset(Dataset):
     def __init__(self, npz_files, max_samples=None):
@@ -58,14 +59,12 @@ def load_data(data_dir, test_mode=False, test_size=5000):
 
     if not train_files or not val_files:
         if len(all_files) == 1:
-            print(f"Single file {all_files[0]}, splitting 80/20")
-            full = np.load(all_files[0])
-            states, values, moves = full['states'], full['values'], full['moves']
-            n = len(states)
+            full = MMapChessDataset(all_files[0])  # изменено
+            n = len(full)
             n_train = int(0.8 * n)
-            perm = np.random.permutation(n)
-            train_ds = SingleFileSubset(states, values, moves, perm[:n_train])
-            val_ds = SingleFileSubset(states, values, moves, perm[n_train:])
+            indices = np.random.permutation(n)
+            train_ds = torch.utils.data.Subset(full, indices[:n_train])
+            val_ds = torch.utils.data.Subset(full, indices[n_train:])
             return train_ds, val_ds
         else:
             split = int(0.8 * len(all_files))
