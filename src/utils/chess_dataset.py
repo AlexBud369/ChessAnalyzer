@@ -25,10 +25,10 @@ class ChessAlphaDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        s, v, m = self.data[idx]
-        return (torch.tensor(s, dtype=torch.float32),
-                torch.tensor(v, dtype=torch.float32),
-                torch.tensor(m, dtype=torch.long))
+        state = torch.from_numpy(self.data[idx][0]).float()
+        value = torch.tensor(self.data[idx][1], dtype=torch.float32)
+        move = torch.tensor(self.data[idx][2], dtype=torch.long)
+        return state, value, move
 
 
 class SingleFileSubset(Dataset):

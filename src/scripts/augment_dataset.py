@@ -53,7 +53,7 @@ def augment_state_move(state, move_idx):
 
 def main():
     in_path = "/data/dual_dataset_v1.npz"
-    out_path = "D:/chess_project/ChessAnalyzer/src/data/chess_data/dual_dataset_augmented.npz"
+    out_path = "/data/dual_dataset_augmented.npz"
     print("Loading original dataset...")
     data = np.load(in_path)
     states = data['states'].astype(np.float32)
