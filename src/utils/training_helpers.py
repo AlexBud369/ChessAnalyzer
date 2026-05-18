@@ -40,6 +40,11 @@ def cleanup_old_checkpoints(model_dir, keep_last=CHECKPOINT_KEEP_LAST):
 
 
 def find_latest_checkpoint(model_dir):
+    best_checkpoint = os.path.join(model_dir, "best_checkpoint.pt")
+    if os.path.exists(best_checkpoint):
+        print(f"Found best checkpoint: {best_checkpoint}")
+        return best_checkpoint
+
     pattern = os.path.join(model_dir, "checkpoint_epoch*_batch*.pt")
     files = glob.glob(pattern)
     if not files:
@@ -74,12 +79,10 @@ def save_checkpoint(model, optimizer, epoch, batch, best_val_loss, model_dir, is
         'best_val_loss': best_val_loss,
     }
     torch.save(state, path)
-    print(f"Checkpoint saved: {path}")
     if is_best:
-        best_path = os.path.join(model_dir, "chess_dual_best.pth")
-        torch.save(model.state_dict(), best_path)
-        print(f"Best model saved: {best_path}")
-
+        best_path = os.path.join(model_dir, "best_checkpoint.pt")
+        torch.save(state, best_path)
+        print(f"Best checkpoint saved: {best_path}")
 
 def train_one_batch(model, states, values, move_indices, optimizer, device, value_coef):
     states = states.to(device)
@@ -168,6 +171,6 @@ def print_epoch_summary(epoch, epochs, train_metrics, val_metrics, lr, best_val_
     else:
         print(f"Train/val gap = {gap:.2f} (normal)")
     if val_t < best_val_loss:
-        print(f"🎉 NEW BEST! (was {best_val_loss:.4f})")
+        print(f"NEW BEST! (was {best_val_loss:.4f})")
     print(f"Current best_val_loss = {min(best_val_loss, val_t):.4f}")
     print(f"{'='*60}\n")

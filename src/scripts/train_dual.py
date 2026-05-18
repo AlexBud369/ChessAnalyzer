@@ -14,7 +14,7 @@ from utils.training_helpers import (
     print_epoch_summary
 )
 
-DEFAULT_DATA_DIR = "src/data/chess_data"
+DEFAULT_DATA_DIR = "src/data/chess_m"
 DEFAULT_MODEL_DIR = "src/model2"
 DEFAULT_BATCH_SIZE = 128
 DEFAULT_EPOCHS = 15
@@ -95,7 +95,7 @@ def main():
             is_best = False
 
         scheduler.step(val_metrics[0])
-        save_checkpoint(model, optimizer, epoch+1, 0, best_val_loss, args.model_dir, is_best)
+        save_checkpoint(model, optimizer, epoch+1, 0, best_val_loss, args.model_dir, is_best=is_best)
         cleanup_old_checkpoints(args.model_dir)
 
         prev_val = val_metrics[0]

@@ -139,7 +139,7 @@ class App:
 
     def _handle_analyze(self):
         try:
-            best_move = self.mcts.search(self.game_state.board)
+            best_move = self.mcts.get_best_move(self.game_state.board)
             if best_move:
                 san = self.game_state.board.san(best_move)
                 value, _ = self.dual_evaluator.evaluate(self.game_state.board)
