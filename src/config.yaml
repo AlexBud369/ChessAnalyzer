@@ -1,0 +1,49 @@
+# Архитектура нейросети
+model:
+  input_channels: 18
+  channels: 128
+  num_blocks: 10
+  se_reduction: 4
+  policy_channels: 32
+  value_hidden: 256
+
+# Обучение
+training:
+  batch_size: 1024
+  epochs: 20
+  lr_max: 0.001
+  lr_min: 1.0e-6
+  warmup_epochs: 1
+  weight_decay: 1.0e-4
+  grad_clip: 1.0
+  value_coef: 1.0
+  amp: true
+  num_workers: 4
+
+# Данные
+data:
+  min_elo: 1800
+  min_time_minutes: 3
+  eval_scale: 0.3
+  train_val_split: 0.9
+  chunk_size: 1000000
+  data_dir: data/processed
+  raw_pgn_dir: data/raw
+
+# Гибридная оценка (веса NN vs эксперт)
+combiner:
+  opening_threshold: 12
+  endgame_threshold: 20
+  nn_weight_opening: 0.35
+  nn_weight_middlegame: 0.65
+  nn_weight_endgame: 0.75
+
+# Поиск
+search:
+  default_depth: 4
+  quiescence: false
+
+# Пути
+paths:
+  checkpoint_dir: checkpoints
+  best_checkpoint: checkpoints/best.pt

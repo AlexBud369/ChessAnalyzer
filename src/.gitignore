@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+checkpoints/
+data/raw/*.pgn
+data/raw/*.zst
+data/processed/
+data/processed_test/
+*.pt
+.DS_Store
+.idea/
+/stockfish/
